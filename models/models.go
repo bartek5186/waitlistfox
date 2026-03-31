@@ -15,7 +15,7 @@ const (
 
 type WaitlistSubscriber struct {
 	ID                      uint       `gorm:"primaryKey" json:"id"`
-	UserType                string     `gorm:"type:enum('passenger','carrier');not null;index:idx_waitlist_user_type" json:"user_type"`
+	UserType                string     `gorm:"size:32;not null;index:idx_waitlist_user_type" json:"user_type"`
 	CampaignID              string     `gorm:"size:100;not null;index:idx_waitlist_campaign_id" json:"campaign_id"`
 	Email                   string     `gorm:"size:255;not null;uniqueIndex:ux_waitlist_email" json:"email"`
 	Phone                   string     `gorm:"size:50" json:"phone,omitempty"`
@@ -28,7 +28,7 @@ type WaitlistSubscriber struct {
 	Referrer                string     `gorm:"size:500" json:"referrer,omitempty"`
 	IPAddress               string     `gorm:"size:45" json:"ip_address,omitempty"`
 	ClientTimestamp         *time.Time `json:"client_timestamp,omitempty"`
-	CreatedAt               time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;index:idx_waitlist_created_at" json:"created_at"`
+	CreatedAt               time.Time  `gorm:"not null;autoCreateTime;index:idx_waitlist_created_at" json:"created_at"`
 	NotifiedAt              *time.Time `json:"notified_at,omitempty"`
 }
 
@@ -47,7 +47,7 @@ type WaitlistUnsubscribe struct {
 	Referrer        string     `gorm:"size:500" json:"referrer,omitempty"`
 	IPAddress       string     `gorm:"size:45" json:"ip_address,omitempty"`
 	ClientTimestamp *time.Time `json:"client_timestamp,omitempty"`
-	CreatedAt       time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;index:idx_waitlist_unsubscribes_created_at" json:"created_at"`
+	CreatedAt       time.Time  `gorm:"not null;autoCreateTime;index:idx_waitlist_unsubscribes_created_at" json:"created_at"`
 }
 
 func (WaitlistUnsubscribe) TableName() string {

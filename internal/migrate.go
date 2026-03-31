@@ -9,7 +9,9 @@ import (
 
 func MigrateRun(db *gorm.DB) error {
 	if err := db.Transaction(func(tx *gorm.DB) error {
-		tx = tx.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
+		if tx.Dialector.Name() == "mysql" {
+			tx = tx.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
+		}
 
 		if err := tx.AutoMigrate(
 			&models.WaitlistSubscriber{},

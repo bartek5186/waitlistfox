@@ -2,7 +2,7 @@
 
 # waitlistFox
 
-`waitlistFox` to prosty backend API do zapisu na waitlistę oparty o Echo i MySQL.
+`waitlistFox` to prosty backend API do zapisu na waitlistę oparty o Echo i GORM, z przełączaną obsługą MySQL albo PostgreSQL.
 
 ## Struktura
 
@@ -20,7 +20,7 @@ main.go
 ## Co jest gotowe
 
 - publiczny endpoint `POST /v1/waitlist/subscribe`
-- persystencja MySQL dla tabeli `waitlist_subscribers`
+- persystencja MySQL albo PostgreSQL dla tabeli `waitlist_subscribers`
 - ochrona przed duplikacją e-maila przez unikalny constraint
 - pola zgód, ID kampanii, metadane requestu i `notified_at`
 - opcjonalna weryfikacja reCAPTCHA konfigurowana w `config/config.json`
@@ -194,3 +194,14 @@ Domyślne zalecenia dla score, które możesz odwzorować w configu:
 - `0.5 - 0.6`: akceptuj, ale monitoruj
 - `0.3 - 0.4`: odrzuć albo wymagaj dodatkowej weryfikacji
 - `0.0 - 0.2`: odrzuć
+
+Konfiguracja bazy wspiera:
+
+- `database.type`: `mysql` albo `postgres`
+- `database.host`
+- `database.user`
+- `database.password`
+- `database.dbname`
+- `database.port`
+- `database.sslmode`: używane dla PostgreSQL, domyślnie `disable`
+- `database.dsn`: opcjonalne jawne DSN dla dowolnego silnika

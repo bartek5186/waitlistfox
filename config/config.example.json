@@ -19,10 +19,13 @@
     "timeout_seconds": 3
   },
   "database": {
+    "type": "mysql",
     "host": "127.0.0.1",
     "user": "waitlistfox",
     "password": "change_me",
     "dbname": "waitlistfox",
-    "port": 3306
+    "port": 3306,
+    "sslmode": "disable",
+    "dsn": ""
   }
 }
