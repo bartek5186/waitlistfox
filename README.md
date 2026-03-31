@@ -40,6 +40,101 @@ go run . -migrate=true
 
 By default, the application reads configuration from `config/config.json`.
 
+## Docker
+
+The repository includes a Docker image and an API-only `compose.yaml`. It does not start MySQL. The database should be provided separately.
+
+1. Create your server-side config as `config/config.json`.
+2. Build and start the API:
+
+```bash
+docker compose up -d --build
+```
+
+3. Run migrations when needed:
+
+```bash
+docker compose run --rm api ./waitlistfox -config /app/config/config.json -migrate=true
+```
+
+Useful runtime details:
+
+- the API listens on container port `8081`
+- host port is controlled by `WAITLISTFOX_PORT`
+- config is mounted from `./config` to `/app/config`
+- logs are written to `./log`
+- you can also enable startup migrations by setting `MIGRATE_ON_START=true`
+
+## Production Docker
+
+For a server deployment without GHCR, use `compose.prod.yaml` and `deploy.sh`.
+
+Files:
+
+- `compose.prod.yaml`: production-oriented Docker Compose file for the API only
+- `.env.production.example`: example runtime values for port, bind IP, timezone, and container name
+- `deploy.sh`: simple deployment helper for build, migrate, start, logs, and status
+
+Suggested server setup:
+
+1. Clone the repo on the server.
+2. Create the real app config:
+
+```bash
+cp config/config.example.json config/config.json
+```
+
+3. Create production env values:
+
+```bash
+cp .env.production.example .env.production
+```
+
+4. Edit both files:
+- `config/config.json`: DB host, user, password, db name, reCAPTCHA
+- `.env.production`: host bind IP and public port
+
+5. Make the deploy script executable:
+
+```bash
+chmod +x deploy.sh
+```
+
+6. First deployment:
+
+```bash
+./deploy.sh
+```
+
+7. Next deployments:
+
+```bash
+./deploy.sh
+```
+
+Useful commands:
+
+```bash
+./deploy.sh status
+./deploy.sh logs
+./deploy.sh migrate
+./deploy.sh deploy --skip-git-pull
+./deploy.sh deploy --skip-migrate
+```
+
+What the deploy script does in `deploy` mode:
+
+1. `git pull --ff-only`
+2. `docker compose -f compose.prod.yaml build api`
+3. optional migration run in a one-off container
+4. `docker compose -f compose.prod.yaml up -d --remove-orphans api`
+
+Recommended production pattern:
+
+- keep the API bound to `127.0.0.1`
+- expose it publicly through Nginx or Caddy as a reverse proxy
+- keep `config/config.json` only on the server and out of git
+
 ## Endpoints
 
 - `GET /health`

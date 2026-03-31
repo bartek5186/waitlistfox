@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"os"
+	"strings"
 
 	"github.com/bartek5186/waitlistfox/controllers"
 	"github.com/bartek5186/waitlistfox/internal"
@@ -14,14 +16,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var migrate bool
+var (
+	migrate    bool
+	configPath string
+)
 
 func init() {
 	flag.BoolVar(&migrate, "migrate", false, "Run DB migrations on start")
+	flag.StringVar(&configPath, "config", "", "Path to configuration file")
 }
 
 func main() {
 	flag.Parse()
+
+	if configPath == "" {
+		configPath = envOrDefault("CONFIG_PATH", "config/config.json")
+	}
+	if !migrate {
+		migrate = envBool("MIGRATE_ON_START")
+	}
 
 	logger := internal.NewLogger()
 
@@ -29,7 +42,7 @@ func main() {
 		logrus.WithError(err).Fatal("failed to load translations")
 	}
 
-	config := internal.LoadConfiguration("config/config.json")
+	config := internal.LoadConfiguration(configPath)
 	db := internal.NewDatabaseConnection(config)
 
 	if migrate {
@@ -58,4 +71,21 @@ func main() {
 	e.POST("/v1/waitlist/unsubscribe", waitlistController.Unsubscribe)
 
 	e.Logger.Fatal(e.Start(config.ServerAddress()))
+}
+
+func envOrDefault(key string, fallback string) string {
+	if value := strings.TrimSpace(os.Getenv(key)); value != "" {
+		return value
+	}
+
+	return fallback
+}
+
+func envBool(key string) bool {
+	switch strings.ToLower(strings.TrimSpace(os.Getenv(key))) {
+	case "1", "true", "yes", "on":
+		return true
+	default:
+		return false
+	}
 }

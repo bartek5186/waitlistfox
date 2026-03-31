@@ -40,6 +40,101 @@ go run . -migrate=true
 
 Domyślnie aplikacja czyta konfigurację z `config/config.json`.
 
+## Docker
+
+Repo zawiera obraz Dockera i `compose.yaml` tylko dla API. Nie uruchamia MySQL. Bazę trzeba wystawić osobno.
+
+1. Przygotuj serwerowy config jako `config/config.json`.
+2. Zbuduj i uruchom API:
+
+```bash
+docker compose up -d --build
+```
+
+3. Uruchom migracje, kiedy są potrzebne:
+
+```bash
+docker compose run --rm api ./waitlistfox -config /app/config/config.json -migrate=true
+```
+
+Przydatne szczegóły runtime:
+
+- API nasłuchuje w kontenerze na porcie `8081`
+- port hosta kontroluje `WAITLISTFOX_PORT`
+- config jest montowany z `./config` do `/app/config`
+- logi są zapisywane do `./log`
+- możesz też włączyć migracje przy starcie przez `MIGRATE_ON_START=true`
+
+## Docker Produkcyjny
+
+Dla wdrożenia na serwer bez GHCR użyj `compose.prod.yaml` i `deploy.sh`.
+
+Pliki:
+
+- `compose.prod.yaml`: produkcyjny Docker Compose tylko dla API
+- `.env.production.example`: przykładowe wartości runtime dla portu, bind IP, timezone i nazwy kontenera
+- `deploy.sh`: prosty helper do builda, migracji, startu, logów i statusu
+
+Sugerowany setup na serwerze:
+
+1. Sklonuj repo na serwer.
+2. Utwórz właściwy config aplikacji:
+
+```bash
+cp config/config.example.json config/config.json
+```
+
+3. Utwórz produkcyjne wartości env:
+
+```bash
+cp .env.production.example .env.production
+```
+
+4. Edytuj oba pliki:
+- `config/config.json`: host DB, user, hasło, nazwa bazy, reCAPTCHA
+- `.env.production`: bind IP hosta i publiczny port
+
+5. Nadaj prawa wykonywania skryptowi deploy:
+
+```bash
+chmod +x deploy.sh
+```
+
+6. Pierwsze wdrożenie:
+
+```bash
+./deploy.sh
+```
+
+7. Kolejne wdrożenia:
+
+```bash
+./deploy.sh
+```
+
+Przydatne komendy:
+
+```bash
+./deploy.sh status
+./deploy.sh logs
+./deploy.sh migrate
+./deploy.sh deploy --skip-git-pull
+./deploy.sh deploy --skip-migrate
+```
+
+Co robi `deploy.sh` w trybie `deploy`:
+
+1. `git pull --ff-only`
+2. `docker compose -f compose.prod.yaml build api`
+3. opcjonalnie uruchamia migracje w jednorazowym kontenerze
+4. `docker compose -f compose.prod.yaml up -d --remove-orphans api`
+
+Zalecany wzorzec produkcyjny:
+
+- trzymaj API zbindowane do `127.0.0.1`
+- wystaw je publicznie przez Nginx albo Caddy jako reverse proxy
+- trzymaj `config/config.json` tylko na serwerze i poza gitem
+
 ## Endpointy
 
 - `GET /health`

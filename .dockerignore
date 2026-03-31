@@ -1,0 +1,9 @@
+.git
+.gitignore
+.codex
+.env
+log
+config/config.json
+README.pl.md
+Waitingfox.png
+waitingfox-logo.png

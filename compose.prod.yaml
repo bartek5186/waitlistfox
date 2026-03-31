@@ -3,17 +3,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: waitlistfox:latest
-    container_name: waitlistfox-api
+    image: waitlistfox:prod
+    container_name: ${WAITLISTFOX_CONTAINER_NAME:-waitlistfox-api}
     restart: unless-stopped
+    init: true
     ports:
-      - "${WAITLISTFOX_PORT:-8081}:8081"
+      - "${WAITLISTFOX_BIND_IP:-127.0.0.1}:${WAITLISTFOX_PORT:-8081}:8081"
     environment:
       CONFIG_PATH: /app/config/config.json
       MIGRATE_ON_START: "${MIGRATE_ON_START:-false}"
+      TZ: "${TZ:-UTC}"
     volumes:
       - ./config:/app/config:ro
       - ./log:/app/log
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health >/dev/null || exit 1"]
       interval: 20s
