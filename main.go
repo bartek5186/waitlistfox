@@ -17,12 +17,14 @@ import (
 )
 
 var (
-	migrate    bool
-	configPath string
+	migrate     bool
+	migrateOnly bool
+	configPath  string
 )
 
 func init() {
 	flag.BoolVar(&migrate, "migrate", false, "Run DB migrations on start")
+	flag.BoolVar(&migrateOnly, "migrate-only", false, "Run DB migrations and exit")
 	flag.StringVar(&configPath, "config", "", "Path to configuration file")
 }
 
@@ -34,6 +36,9 @@ func main() {
 	}
 	if !migrate {
 		migrate = envBool("MIGRATE_ON_START")
+	}
+	if migrateOnly {
+		migrate = true
 	}
 
 	logger := internal.NewLogger()
@@ -48,6 +53,10 @@ func main() {
 	if migrate {
 		if err := internal.MigrateRun(db); err != nil {
 			logrus.WithError(err).Fatal("failed to run migrations")
+		}
+		if migrateOnly {
+			logrus.Info("migrations completed, exiting")
+			return
 		}
 	}
 

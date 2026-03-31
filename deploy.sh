@@ -49,7 +49,7 @@ run_git_pull() {
 }
 
 run_migrations() {
-  compose_cmd run --rm "$SERVICE" ./waitlistfox -config /app/config/config.json -migrate=true
+  compose_cmd run --rm "$SERVICE" ./waitlistfox -config /app/config/config.json -migrate-only=true
 }
 
 build_service() {

@@ -54,7 +54,7 @@ docker compose up -d --build
 3. Uruchom migracje, kiedy są potrzebne:
 
 ```bash
-docker compose run --rm api ./waitlistfox -config /app/config/config.json -migrate=true
+docker compose run --rm api ./waitlistfox -config /app/config/config.json -migrate-only=true
 ```
 
 Przydatne szczegóły runtime:
@@ -128,7 +128,7 @@ Co robi `deploy.sh` w trybie `deploy`:
 
 1. `git pull --ff-only`
 2. `docker compose -f compose.prod.yaml build api`
-3. opcjonalnie uruchamia migracje w jednorazowym kontenerze
+3. opcjonalnie uruchamia migracje w jednorazowym kontenerze, który kończy działanie zaraz po migracji
 4. `docker compose -f compose.prod.yaml up -d --remove-orphans api`
 
 Zalecany wzorzec produkcyjny:
