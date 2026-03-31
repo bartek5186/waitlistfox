@@ -62,8 +62,10 @@ Przydatne szczegóły runtime:
 - API nasłuchuje w kontenerze na porcie `8081`
 - port hosta kontroluje `WAITLISTFOX_PORT`
 - config jest montowany z `./config` do `/app/config`
-- logi są zapisywane do `./log`
+- w Dockerze logi lecą domyślnie do `docker logs`, bo `LOG_TO_FILE=false`
+- jeśli chcesz też logi do pliku, ustaw `LOG_TO_FILE=true` i upewnij się, że `./log` jest zapisywalne dla użytkownika kontenera
 - możesz też włączyć migracje przy starcie przez `MIGRATE_ON_START=true`
+- jeśli baza działa poza tym Compose, ale jest wystawiona na hoście, użyj w `config/config.json` adresu `host.docker.internal` zamiast `127.0.0.1`
 
 ## Docker Produkcyjny
 

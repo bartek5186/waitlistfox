@@ -9,9 +9,12 @@ services:
     init: true
     ports:
       - "${WAITLISTFOX_BIND_IP:-127.0.0.1}:${WAITLISTFOX_PORT:-8081}:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       CONFIG_PATH: /app/config/config.json
       MIGRATE_ON_START: "${MIGRATE_ON_START:-false}"
+      LOG_TO_FILE: "${LOG_TO_FILE:-false}"
       TZ: "${TZ:-UTC}"
     volumes:
       - ./config:/app/config:ro

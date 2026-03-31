@@ -62,8 +62,10 @@ Useful runtime details:
 - the API listens on container port `8081`
 - host port is controlled by `WAITLISTFOX_PORT`
 - config is mounted from `./config` to `/app/config`
-- logs are written to `./log`
+- in Docker, logs go to `docker logs` by default because `LOG_TO_FILE=false`
+- if you want file logs too, set `LOG_TO_FILE=true` and ensure `./log` is writable for the container user
 - you can also enable startup migrations by setting `MIGRATE_ON_START=true`
+- if your database runs outside this Compose stack but is exposed on the host, use `host.docker.internal` instead of `127.0.0.1` in `config/config.json`
 
 ## Production Docker
 
