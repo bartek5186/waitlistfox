@@ -1,3 +1,5 @@
+![waitlistFox logo](waitingfox-logo.png)
+
 # waitlistFox
 
 `waitlistFox` to prosty backend API do zapisu na waitlistę oparty o Echo i MySQL.
