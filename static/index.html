@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>waitlistFox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f0e7;
+      --bg-strong: #efe2d1;
+      --fg: #1b2330;
+      --muted: #5d6675;
+      --accent: #0e8a6a;
+      --accent-strong: #0a6b52;
+      --danger: #9f3e32;
+      --card: rgba(255, 252, 247, 0.9);
+      --border: rgba(27, 35, 48, 0.14);
+      --shadow: 0 24px 80px rgba(27, 35, 48, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--fg);
+      background:
+        radial-gradient(circle at top left, rgba(14, 138, 106, 0.18), transparent 28%),
+        radial-gradient(circle at right 20%, rgba(159, 62, 50, 0.1), transparent 20%),
+        linear-gradient(180deg, #fbf6ef 0%, var(--bg) 58%, var(--bg-strong) 100%);
+      padding: 32px 20px;
+    }
+
+    main {
+      width: min(1020px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel {
+      padding: 40px 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(14, 138, 106, 0.18), rgba(14, 138, 106, 0));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.88rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 0.92;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+    }
+
+    p {
+      margin: 0 0 16px;
+      font-size: 1.04rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .api-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .api-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.64);
+      border: 1px solid rgba(27, 35, 48, 0.08);
+    }
+
+    .api-item code {
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .api-item span {
+      color: var(--muted);
+      text-align: right;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      padding: 30px 26px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 0.98rem;
+      color: var(--fg);
+    }
+
+    input,
+    select,
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid rgba(27, 35, 48, 0.16);
+      border-radius: 10px;
+      padding: 14px 15px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--fg);
+      font-weight: 500;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid rgba(14, 138, 106, 0.2);
+      border-color: var(--accent);
+    }
+
+    .hint {
+      margin: -2px 0 2px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--danger), #bc5746);
+      color: white;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+      box-shadow: 0 14px 30px rgba(159, 62, 50, 0.2);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      transform: none;
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .status[data-variant="success"] {
+      color: var(--accent-strong);
+    }
+
+    .status[data-variant="error"] {
+      color: var(--danger);
+    }
+
+    @media (max-width: 860px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .panel,
+      .card {
+        padding: 28px 22px;
+      }
+
+      .api-item {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .api-item span {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <p class="eyebrow">waitlistFox</p>
+      <h1>Waitlist API<br>with unsubscribe</h1>
+      <p>Backend zapisuje użytkowników do waitlisty bez duplikatów e-mail, przechowuje metadane requestu i pozwala usunąć wpis po świadomym potwierdzeniu adresu oraz powodu wypisu.</p>
+      <p>Formularz obok wysyła żądanie do API dopiero po poprawnym uzupełnieniu wszystkich wymaganych pól.</p>
+
+      <div class="api-list">
+        <div class="api-item">
+          <code>GET /health</code>
+          <span>Status aplikacji</span>
+        </div>
+        <div class="api-item">
+          <code>POST /v1/waitlist/subscribe</code>
+          <span>Dodaje adres do waitlisty</span>
+        </div>
+        <div class="api-item">
+          <code>POST /v1/waitlist/unsubscribe</code>
+          <span>Usuwa wpis po podaniu e-maila i powodu</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Unsubscribe</h2>
+      <p>Podaj adres e-mail i wybierz powód rezygnacji. Po poprawnym wysłaniu formularza wpis zostanie usunięty z waitlisty.</p>
+
+      <form id="unsubscribe-form" novalidate>
+        <label for="email">
+          Email
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="user@example.com" required>
+        </label>
+
+        <label for="reason">
+          Powód wypisu
+          <select id="reason" name="reason" required>
+            <option value="">Wybierz powód</option>
+            <option value="found_alternative">Znalazłem alternatywę</option>
+            <option value="too_many_emails">Dostaję za dużo wiadomości</option>
+            <option value="not_interested">Nie jestem już zainteresowany</option>
+            <option value="privacy_concerns">Mam obawy o prywatność</option>
+            <option value="signed_up_by_mistake">Zapisałem się przez pomyłkę</option>
+            <option value="other">Inny powód</option>
+          </select>
+        </label>
+
+        <p class="hint">Formularz dołączy też bieżący czas, `user_agent` i `referrer`.</p>
+
+        <button type="submit" id="submit-button">Usuń z waitlisty</button>
+        <div class="status" id="form-status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("unsubscribe-form");
+    const status = document.getElementById("form-status");
+    const button = document.getElementById("submit-button");
+
+    function setStatus(message, variant) {
+      status.textContent = message || "";
+      status.dataset.variant = variant || "";
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      button.disabled = true;
+      setStatus("Usuwanie wpisu z waitlisty...", "");
+
+      const payload = {
+        email: form.email.value.trim(),
+        reason: form.reason.value,
+        timestamp: new Date().toISOString(),
+        user_agent: window.navigator.userAgent,
+        referrer: document.referrer || window.location.href
+      };
+
+      try {
+        const response = await fetch("/v1/waitlist/unsubscribe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || "Nie udało się usunąć wpisu z waitlisty.");
+        }
+
+        form.reset();
+        setStatus(data.message || "Adres został usunięty z waitlisty.", "success");
+      } catch (error) {
+        setStatus(error.message || "Nie udało się usunąć wpisu z waitlisty.", "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "health.status": "ok",
+  "waitlist.subscribe.success": "Thanks. Your waitlist signup has been received.",
+  "waitlist.unsubscribe.success": "The email address has been removed from the waitlist.",
+  "waitlist.error.invalid_payload": "Invalid request payload.",
+  "waitlist.error.internal": "Internal server error.",
+  "waitlist.error.consent_required": "Waitlist consent is required.",
+  "waitlist.error.campaign_required": "Campaign ID is required.",
+  "waitlist.error.duplicate_email": "This email address is already on the waitlist.",
+  "waitlist.error.not_found": "This email address was not found on the waitlist.",
+  "waitlist.error.recaptcha_required": "reCAPTCHA token is required.",
+  "waitlist.error.recaptcha_rejected": "reCAPTCHA verification failed.",
+  "waitlist.error.recaptcha_misconfigured": "reCAPTCHA is not configured correctly."
+}

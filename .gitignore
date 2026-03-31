@@ -1,0 +1,5 @@
+.gocache/
+log/
+config/config.json
+.codex
+.env
